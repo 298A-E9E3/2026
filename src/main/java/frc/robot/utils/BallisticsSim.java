@@ -1,26 +1,16 @@
 package frc.robot.utils;
 
-import java.util.Vector;
-
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.apache.commons.math3.ode.sampling.StepInterpolator;
-import org.opencv.core.Mat;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.Timer;
-import java.util.ArrayList;
-
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class BallisticsSim {
     // -----CONFIG-----
@@ -49,15 +39,15 @@ public class BallisticsSim {
     private static final double area = Math.pow(diameter / 2, 2) * Math.PI;
     // Ball mass (kg)
     private static final double mass = 0.21;
-    // Ball weight (N) [TODO: Note from Riley: This is never used]
+    // Ball weight (N)
     // private static final double weight = mass * g;
     // Ball coefficient of drag (unitless)
     private static final double dragCoeff = 0.471;
 
     // Bot stats
-    private static final double wheelDiameter = Units.inchesToMeters(3);
-    private static final double maxRPM = 6784;
-    private static final double maxRPS = maxRPM/60;
+    // private static final double wheelDiameter = Units.inchesToMeters(3);
+    // private static final double maxRPM = 6784;
+    // private static final double maxRPS = maxRPM/60;
 
 
     // Basic functions
@@ -160,13 +150,11 @@ public class BallisticsSim {
     private static double endTime = 0;
 
     /**
-     * Simulate the trajectory of a fuel using Apache Math Common's Ordinary
-     * Differential Equation solver
+     * Simulate the trajectory of a fuel using Apache Math Common's Ordinary Differential Equation solver
      * 
      * @param startPos The starting position of the ball (M)
      * @param startVel The starting velocity of the ball (M/s)
-     * @param targetX  The x position that the ball must reach to end the simulation
-     *                 (M)
+     * @param targetX  The x position that the ball must reach to end the simulation (M)
      * @return
      */
     public static BallisticsSimResult2D ODESimulate(Translation2d startPos, Translation2d startVel, double targetX) {
@@ -185,24 +173,6 @@ public class BallisticsSim {
 
             public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing) {
                 return (EventHandler.Action.STOP);
-            }
-
-            public void resetState(double t, double[] y) {
-            }
-        };
-        // The event handler that will end the simulation when the ball passes below y
-        // 0. This is just to prevent the integration from runnning forever
-        EventHandler backupEventHandler = new EventHandler() {
-            public void init(double t0, double[] y0, double t) {
-            }
-
-            public double g(double t, double[] y) {
-                return (y[1]);
-            }
-
-            public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing) {
-                endReached = false;
-                return Action.STOP;
             }
 
             public void resetState(double t, double[] y) {
@@ -349,7 +319,7 @@ public class BallisticsSim {
     }
     /**
      * Finds the correct angle and speed to get the fuel to pass through a target point
-     * @param target The position of the target <b>relative to where the ball comes out of the shooter</b>
+     * @param target The position of the target RELATIVE TO WHERE THE BALL COMES OUT OF THE SHOOTER
      * @param robotVelocity The horizontal velocity of the robot. If the robot is going to do jumps, this function won't work
      * @param accuracyMargin The acceptable margin of accuracy in meters
      * @return A {@link Translation2d} containing the speed and angle
